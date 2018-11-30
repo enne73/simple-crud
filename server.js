@@ -19,8 +19,8 @@ app.use(bodyParser.json())
 //   });
 // });
 
-app.get(‘/’, function (req, res) {
- res.send(JSON.stringify({ Hello: ‘World’}));
+app.get('/', function (req, res) {
+ res.send(JSON.stringify({ Hello: 'World'}));
 });
 
 // listen for requests
