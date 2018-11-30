@@ -1,0 +1,30 @@
+{
+  "name": "simple-crud",
+  "version": "1.0.0",
+  "description": "A simple CRUD",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enne73/simple-crud.git"
+  },
+  "keywords": [
+    "NodeJS",
+    "ExpressJS",
+    "MongoDb",
+    "CRUD"
+  ],
+  "author": "Enrico Baraldi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/enne73/simple-crud/issues"
+  },
+  "homepage": "https://github.com/enne73/simple-crud#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "mongoose": "^5.3.14"
+  }
+}
