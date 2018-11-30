@@ -13,10 +13,14 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 
 // define a simple route
-app.get('/', (req, res) => {
-  res.json({
-    "message": "Welcome to simple-crud."
-  });
+// app.get('/', (req, res) => {
+//   res.json({
+//     "message": "Welcome to simple-crud."
+//   });
+// });
+
+app.get(‘/’, function (req, res) {
+ res.send(JSON.stringify({ Hello: ‘World’}));
 });
 
 // listen for requests
