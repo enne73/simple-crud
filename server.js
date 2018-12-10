@@ -22,7 +22,7 @@ app.use(bodyParser.json())
 // });
 
 app.get('/', function (req, res) {
- res.send(JSON.stringify({ Hello: 'World'}));
+ res.send('Hello');
 });
 
 // listen for requests
