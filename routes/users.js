@@ -41,6 +41,22 @@ router.get('/update/:id', (req, res, next) => {
   });
 });
 
+router.get('/detail/:id', (req, res, next) => {
+  let id = req.params.id;
+  User.findOne({
+    _id: id
+  }, (err, user) => {
+    if (err) throw err;
+    res.render('users/form', {
+      user: user
+    });
+  });
+});
+
+router.get('/add', (req, res, next) => {
+  res.render('users/form');
+});
+
 router.post("/add", (req, res, next) => {
 
   const user = new User({
@@ -63,26 +79,26 @@ router.post("/add", (req, res, next) => {
 
 router.post("/persist", (req, res, next) => {
   const id = req.body._id;
-
+  let wm = {
+    name: {
+      first: req.body.first,
+      last: req.body.last
+    },
+    email: req.body.email
+  }
+  console.log(wm);
   if (id) {
-    User.findByIdAndUpdate(req.params.id, {
-      $set: req.body
-    }, function(err, product) {
+    User.findOneAndUpdate(id, {
+      $set: wm
+    }, function(err, user) {
       if (err) return next(err);
-      res.send('User udpated.');
+      res.redirect('detail/' + id);
     });
   } else {
-    let user = new User({
-      // _id: new ObjectID(),
-      name: {
-        first: req.body.first,
-        last: req.body.last
-      },
-      email: req.body.email
-    });
-    user.save(function(err) {
+    let user = new User(wm);
+    user.save(function(err, u) {
       if (err) return next(err);
-      res.send('User created.')
+      res.redirect('detail/' + u._id);
     })
   }
 });
