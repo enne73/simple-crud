@@ -23,6 +23,24 @@ router.get("/list", (req, res, next) => {
     });
 });
 
+
+router.get("/error", (req, res, next) => {
+  throw Error('simulated error');
+});
+
+
+router.get('/update/:id', (req, res, next) => {
+  let id = req.params.id;
+  User.findOne({
+    _id: id
+  }, (err, user) => {
+    if (err) throw err;
+    res.render('users/form', {
+      user: user
+    });
+  });
+});
+
 router.post("/add", (req, res, next) => {
 
   const user = new User({
