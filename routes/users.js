@@ -61,6 +61,33 @@ router.post("/add", (req, res, next) => {
     });
 });
 
+router.post("/persist", (req, res, next) => {
+  const id = req.body._id;
+
+  if (id) {
+    User.findByIdAndUpdate(req.params.id, {
+      $set: req.body
+    }, function(err, product) {
+      if (err) return next(err);
+      res.send('User udpated.');
+    });
+  } else {
+    let user = new User({
+      // _id: new ObjectID(),
+      name: {
+        first: req.body.first,
+        last: req.body.last
+      },
+      email: req.body.email
+    });
+    user.save(function(err) {
+      if (err) return next(err);
+      res.send('User created.')
+    })
+  }
+});
+
+
 router.post("/delete", (req, res, next) => {
   const rid = req.body.id;
 
