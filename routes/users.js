@@ -46,9 +46,7 @@ router.get('/detail/:op/:id', (req, res, next) => {
     'update': 'aggiornamento completato',
     'delete': 'cancellazione completata',
   }
-  User.findOne({
-    _id: id
-  }, (err, user) => {
+  User.findById(id, (err, user) => {
     if (err) throw err;
     res.render('users/form', {
       user: user,
@@ -63,7 +61,7 @@ router.get('/add', (req, res, next) => {
 
 router.get('/search', (req, res, next) => {
   console.log('=============== search')
-  User.find({})
+  User.find({}).sort('-updatedAt')
     .exec()
     .then(users => {
       console.log(users)
@@ -73,6 +71,7 @@ router.get('/search', (req, res, next) => {
     })
     .catch(err => {
       console.log(err)
+      next(err);
     });
 });
 
@@ -105,24 +104,38 @@ router.post("/persist", (req, res, next) => {
         })
       }
     });
-  }, 1500);
+  }, 1000);
 });
 
-
 router.post("/delete", (req, res, next) => {
-  const rid = req.body.id;
-
-  User.findById(rid)
-    .exec()
-    .then(docs => {
-      docs.remove();
-      res.status(200).json({
-        deleted: true
+  const id = req.body.id;
+  setTimeout(() => {
+    User.findOne({
+        _id: id
+      })
+      .exec()
+      .then(user => {
+        user.remove((err) => {
+          if(err) {
+            res.send({
+              success: false,
+              err: err
+            });
+          } else {
+            res.send({
+              success: true
+            })
+          }
+        })
+      })
+      .catch(err => {
+        console.log(err)
+        res.send({
+          success: false,
+          err: err
+        })
       });
-    })
-    .catch(err => {
-      console.log(err)
-    });
+  }, 1000);
 });
 
 module.exports = router;

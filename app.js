@@ -4,11 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var hbs = require('hbs');
+var moment = require('moment');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-// import db from "./config/database";
 var db = require('./config/database');
 
 var app = express();
@@ -18,19 +18,24 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 hbs.registerHelper('section', function(name, options) {
-		if (!this._sections) this._sections = {};
-		this._sections[name] = options.fn(this);
-		return null;
-	}
-
-);
+  if (!this._sections) this._sections = {};
+  this._sections[name] = options.fn(this);
+  return null;
+});
+hbs.registerHelper('fromnow', function(dt) {
+	moment.locale('it');
+  return moment(dt).fromNow();
+});
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/javascripts/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
 app.use('/stylesheets/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/'));
 app.use('/stylesheets/fontawesome', express.static(__dirname + '/node_modules/@fortawesome/fontawesome-free/'));
 

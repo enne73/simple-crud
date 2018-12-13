@@ -1,15 +1,16 @@
 <div class="container">
   <div class="text-right">
-    <a href="/users/add" class="btn btn-sm btn-light"><i class="fas fa-plus"></i> nuovo utente</a>
+    <a href="/users/add" class="btn btn-primary">nuovo utente</a>
   </div>
   <div>
     <br/>
     <br/>
-    <table class="table table-hover  w-100 ">
+    <table class="table table-hover w-100">
       <thead>
         <tr>
           <th scope="col">nome e cognome</th>
           <th scope="col">e-mail</th>
+          <th scope="col">ultima modifica</th>
         </tr>
       </thead>
       <tbody>
@@ -17,6 +18,7 @@
           <tr data-href="/users/update/{{_id}}">
             <td scope="row">{{name.first}} {{name.last}}</td>
             <td scope="row">{{email}}</td>
+            <td scope="row"><span class="text-muted">{{{fromnow updatedAt}}}</span></td>
           </tr>
         {{/each}}
       </tbody>
