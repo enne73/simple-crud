@@ -37,8 +37,8 @@
         inserire una e-mail valida
       </div>
     </div>
-    <div class="form-group text-right">
-      <button type="submit" class="btn btn-sm btn-primary "> conferma</button>
+    <div class="form-group text-right mt-1">
+      <button type="submit" class="btn btn-primary "> conferma</button>
     </div>
   </form>
 </div>
@@ -53,9 +53,9 @@
         <br/>
         <i class="far fa-trash-alt fa-3x"></i>
         <br/>
-        <br/>
+        <!-- <br/>
         <i class="far fa-question-circle fa-2x"></i>
-        <br/>
+        <br/> -->
         <br/>
         <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i> annulla</button>
         <button type="button" class="btn btn-danger" onclick='deleteUser("{{user._id}}")'><i class="far fa-trash-alt"></i> elimina</button>
@@ -70,7 +70,7 @@
     $(function() {
       {{#if op}}
         $.snackbar({
-          content: '<i class="far fa-grin-alt"></i> {{op}}',
+          content: '{{op}}',
           htmlAllowed: true,
         });
       {{/if}}

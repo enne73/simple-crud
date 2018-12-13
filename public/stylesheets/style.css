@@ -8,7 +8,7 @@ a {
 
 .container {
   width: 100%;
-  max-width: 660px;
+  /* max-width: 660px; */
   padding: 15px;
   margin: 0 auto;
 }
