@@ -1,5 +1,7 @@
 var express = require('express');
 var mongoose = require('mongoose');
+var ObjectId = require('mongodb').ObjectID;
+
 const router = express.Router();
 
 var User = require('../schema/User');
@@ -75,8 +77,61 @@ router.get('/search', (req, res, next) => {
     });
 });
 
+router.post("/add", (req, res, next) => {
+  setTimeout(() => {
+    let wm = {
+      name: {
+        first: req.body.first,
+        last: req.body.last
+      },
+      email: req.body.email
+    }
+    User.create(wm, function(err, u) {
+      if (err) return next(err);
+      res.redirect('detail/insert/' + u._id);
+    })
+  }, 1000);
+});
+
+router.post("/update", (req, res, next) => {
+  setTimeout(() => {
+    let wm = {
+      name: {
+        first: req.body.first,
+        last: req.body.last
+      },
+      email: req.body.email
+    }
+    console.log('======= UPDATE', req.body._id)
+
+    User.findById(req.body._id, function (err, user) {
+      if (err) return next(err);
+      if(user) {
+          Object.assign(user, wm);
+            user.save((err, u) => {
+              if (err) return next(err);
+              res.redirect('detail/update/' + u._id);
+            });
+      }
+
+
+
+    });
+
+// User.update({ _id:  pareq.body._id }, { $set: wm }, (err, u) => {
+//   if (err) return next(err);
+//   res.redirect('detail/update/' + u._id);
+// });
+
+    // User.updateOne({_id: new ObjectId(req.body._id)}, wm, function(err, u) {
+    //
+    // })
+  }, 1000);
+});
+
 router.post("/persist", (req, res, next) => {
   let wm = {
+    _id: req.body._id ? new ObjectId(req.body._id) : new ObjectId(),
     name: {
       first: req.body.first,
       last: req.body.last
@@ -84,26 +139,37 @@ router.post("/persist", (req, res, next) => {
     email: req.body.email
   }
   setTimeout(() => {
-    User.findOne({
-      email: wm.email
-    }, function(err, user) {
-      if (err) {
-        return next(err);
-      } else {
-        let op = user ? 'update' : 'insert';
-        if (!user) {
-          user = new User(wm);
-        } else {
-          delete wm._id;
-          Object.assign(user, wm);
-        }
-        console.log(user);
-        user.save(function(err, u) {
-          if (err) return next(err);
-          res.redirect('detail/' + op + '/' + u._id);
-        })
-      }
-    });
+    let op = req.body._id ? 'update' : 'insert';
+
+    let user = new User(wm);
+    console.log(req.body._id, op, user)
+
+    // console.log(user);
+    user.save(function(err, u) {
+      if (err) return next(err);
+      res.redirect('detail/' + op + '/' + u._id);
+    })
+
+    // User.findById(req.body._id, function(err, user) {
+    //   if (err) {
+    //     console.log(err)
+    //     return next(err);
+    //   } else {
+    //     let op = user ? 'update' : 'insert';
+    //     console.log(req.body._id, op, user)
+    //     if (!user) {
+    //       user = new User(wm);
+    //     } else {
+    //       delete wm._id;
+    //       Object.assign(user, wm);
+    //     }
+    //     // console.log(user);
+    //     user.save(function(err, u) {
+    //       if (err) return next(err);
+    //       res.redirect('detail/' + op + '/' + u._id);
+    //     })
+    //   }
+    // });
   }, 1000);
 });
 
@@ -116,7 +182,7 @@ router.post("/delete", (req, res, next) => {
       .exec()
       .then(user => {
         user.remove((err) => {
-          if(err) {
+          if (err) {
             res.send({
               success: false,
               err: err

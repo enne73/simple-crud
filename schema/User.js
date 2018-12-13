@@ -15,9 +15,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
     lowercase: true,
-    unique: true,
+    // unique: true,
     required: 'e-mail obbligatoria',
-    // validate: [validateEmail, 'e-mail non valida'],
     match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'e-mail non valida']
   },
   createdAt: {type: Date, default: Date.now},
