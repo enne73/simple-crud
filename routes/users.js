@@ -23,11 +23,9 @@ router.get("/list", (req, res, next) => {
     });
 });
 
-
 router.get("/error", (req, res, next) => {
   throw Error('simulated error');
 });
-
 
 router.get('/update/:id', (req, res, next) => {
   let id = req.params.id;
@@ -41,14 +39,20 @@ router.get('/update/:id', (req, res, next) => {
   });
 });
 
-router.get('/detail/:id', (req, res, next) => {
+router.get('/detail/:op/:id', (req, res, next) => {
   let id = req.params.id;
+  let wmsg = {
+    'insert': 'inserimento completato',
+    'update': 'aggiornamento completato',
+    'delete': 'cancellazione completata',
+  }
   User.findOne({
     _id: id
   }, (err, user) => {
     if (err) throw err;
     res.render('users/form', {
-      user: user
+      user: user,
+      op: wmsg[req.params.op]
     });
   });
 });
@@ -57,28 +61,22 @@ router.get('/add', (req, res, next) => {
   res.render('users/form');
 });
 
-router.post("/add", (req, res, next) => {
-
-  const user = new User({
-    _id: mongoose.Types.ObjectId(),
-    name: req.body.name,
-    address: req.body.address,
-    salary: req.body.salary
-  });
-
-  user.save()
-    .then(result => {
-      res.status(200).json({
-        docs: [user]
+router.get('/search', (req, res, next) => {
+  console.log('=============== search')
+  User.find({})
+    .exec()
+    .then(users => {
+      console.log(users)
+      res.render('users/search', {
+        users: users
       });
     })
     .catch(err => {
-      console.log(err);
+      console.log(err)
     });
 });
 
 router.post("/persist", (req, res, next) => {
-  const id = req.body._id;
   let wm = {
     name: {
       first: req.body.first,
@@ -86,21 +84,28 @@ router.post("/persist", (req, res, next) => {
     },
     email: req.body.email
   }
-  console.log(wm);
-  if (id) {
-    User.findOneAndUpdate(id, {
-      $set: wm
+  setTimeout(() => {
+    User.findOne({
+      email: wm.email
     }, function(err, user) {
-      if (err) return next(err);
-      res.redirect('detail/' + id);
+      if (err) {
+        return next(err);
+      } else {
+        let op = user ? 'update' : 'insert';
+        if (!user) {
+          user = new User(wm);
+        } else {
+          delete wm._id;
+          Object.assign(user, wm);
+        }
+        console.log(user);
+        user.save(function(err, u) {
+          if (err) return next(err);
+          res.redirect('detail/' + op + '/' + u._id);
+        })
+      }
     });
-  } else {
-    let user = new User(wm);
-    user.save(function(err, u) {
-      if (err) return next(err);
-      res.redirect('detail/' + u._id);
-    })
-  }
+  }, 1500);
 });
 
 
