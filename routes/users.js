@@ -77,6 +77,33 @@ router.get('/search', (req, res, next) => {
     });
 });
 
+router.get('/paginate/:p', (req, res, next) => {
+  const PAGE_SIZE = 5;
+  let page = req.params.p;
+  let skip = PAGE_SIZE * (page - 1);
+  console.log('=============== paginate', page, skip, PAGE_SIZE)
+  let w = { }
+  User.count(w, (err, count) => {
+    if (err) return next(err);
+    var q = User.find(w);
+    q.limit(PAGE_SIZE);
+    q.skip(skip);
+    q.sort('-updatedAt');
+    q.exec(function(err, users) {
+      if (err) return next(err);
+      console.log(users)
+      res.render('users/search', {
+        users: users,
+        page: page,
+        limit: PAGE_SIZE,
+        total: count,
+        pages: Math.ceil(count / PAGE_SIZE)
+      });
+    });
+  })
+
+});
+
 router.post("/add", (req, res, next) => {
   setTimeout(() => {
     let wm = {
@@ -104,24 +131,24 @@ router.post("/update", (req, res, next) => {
     }
     console.log('======= UPDATE', req.body._id)
 
-    User.findById(req.body._id, function (err, user) {
+    User.findById(req.body._id, function(err, user) {
       if (err) return next(err);
-      if(user) {
-          Object.assign(user, wm);
-            user.save((err, u) => {
-              if (err) return next(err);
-              res.redirect('detail/update/' + u._id);
-            });
+      if (user) {
+        Object.assign(user, wm);
+        user.save((err, u) => {
+          if (err) return next(err);
+          res.redirect('detail/update/' + u._id);
+        });
       }
 
 
 
     });
 
-// User.update({ _id:  pareq.body._id }, { $set: wm }, (err, u) => {
-//   if (err) return next(err);
-//   res.redirect('detail/update/' + u._id);
-// });
+    // User.update({ _id:  pareq.body._id }, { $set: wm }, (err, u) => {
+    //   if (err) return next(err);
+    //   res.redirect('detail/update/' + u._id);
+    // });
 
     // User.updateOne({_id: new ObjectId(req.body._id)}, wm, function(err, u) {
     //

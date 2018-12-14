@@ -8,6 +8,8 @@
   <div>
     <br/>
     <br/>
+
+    <!-- {{pages}} -->
     <table class="table table-hover table-sm table-bordered w-100">
       <thead >
         <!-- class="thead-dark" -->
@@ -27,5 +29,13 @@
         {{/each}}
       </tbody>
     </table>
+
+    <div class="text-center mb-2"><b>{{total}}</b> utenti</div>
+    {{#if (gt pages 1)}}
+	   {{{ pager page pages }}}
+		{{/if}}
+
+
+
   </div>
 </div>

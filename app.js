@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var hbs = require('hbs');
 var moment = require('moment');
+var _ = require('lodash');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -25,6 +26,23 @@ hbs.registerHelper('section', function(name, options) {
 hbs.registerHelper('fromnow', function(dt) {
 	moment.locale('it');
   return moment(dt).fromNow();
+});
+hbs.registerHelper('gt',function(v1, v2) {
+	return v1 > v2;
+});
+hbs.registerHelper('pager', function(current, total) {
+  let html = '';
+  html += '<nav>';
+  html += '  <ul class="pagination justify-content-center">';
+  // html += '    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>'
+  for(let page = 1; page <= total; page++)  {
+    html += '<li class="page-item' + (page == current ? ' disabled' : '')+ '"><a class="page-link" href="/users/paginate/' + page + '">' + page + '</a></li>';
+  }
+  // html += '  <li class="page-item"><a class="page-link" href="#">Next</a></li>';
+
+  html += '</ul>';
+  html += '</nav>';
+  return html;
 });
 
 app.use(logger('dev'));
