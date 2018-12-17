@@ -6,6 +6,8 @@ var logger = require('morgan');
 var hbs = require('hbs');
 var moment = require('moment');
 var _ = require('lodash');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -13,6 +15,13 @@ var usersRouter = require('./routes/users');
 var db = require('./config/database');
 
 var app = express();
+
+// swagger
+var swaggerOpt = {
+  explorer : false,
+  customCss: '.swagger-ui .topbar { display: none }'
+};
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOpt));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -34,12 +43,9 @@ hbs.registerHelper('pager', function(current, total) {
   let html = '';
   html += '<nav>';
   html += '  <ul class="pagination justify-content-center">';
-  // html += '    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>'
   for(let page = 1; page <= total; page++)  {
     html += '<li class="page-item' + (page == current ? ' disabled' : '')+ '"><a class="page-link" href="/users/paginate/' + page + '">' + page + '</a></li>';
   }
-  // html += '  <li class="page-item"><a class="page-link" href="#">Next</a></li>';
-
   html += '</ul>';
   html += '</nav>';
   return html;

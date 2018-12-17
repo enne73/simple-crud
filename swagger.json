@@ -1,0 +1,82 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Simple CRUD",
+    "description": "Un <em>semplice</em> CRUD per la gestione degli utenti.",
+    "version": "1.0"
+  },
+  "produces": ["application/json"],
+  "paths": {
+    "/users/list": {
+      "get": {
+        "operationId": "usersList",
+        "produces": [
+          "application/json"
+        ],
+        "tags": ["/users"],
+        "description": "lista di tutti gli utenti",
+        "parameters": [],
+
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          }
+
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "required": [
+        "email"
+      ],
+      "properties": {
+        "name": {
+          "type": "object",
+          "required": [
+            "first",
+            "last"
+          ],
+          "properties": {
+            "first": {
+              "type": "string",
+              "description": "nome dell'utente"
+            },
+            "last": {
+              "type": "string",
+              "description": "cognome dell'utente"
+            }
+          }
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "pattern": "/^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$/",
+          "description": "indirizzo e-mail dell'utente"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "data di creazione dell'utente"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "data di ultima modifica dell'utente"
+        }
+      },
+      "xml": {
+        "name": "User"
+      }
+    }
+
+  }
+}

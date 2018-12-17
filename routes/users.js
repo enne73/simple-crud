@@ -6,11 +6,11 @@ const router = express.Router();
 
 var User = require('../schema/User');
 
-router.get("/", (req, res, next) => {
-  res.status(200).json({
-    message: "Serving Users on the Endpoint."
-  });
-});
+// router.get("/", (req, res, next) => {
+//   res.status(200).json({
+//     message: "Serving Users on the Endpoint."
+//   });
+// });
 
 router.get("/list", (req, res, next) => {
   User.find({})
