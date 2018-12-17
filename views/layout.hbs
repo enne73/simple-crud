@@ -15,8 +15,15 @@
 </head>
 
 <body>
+
+  <header>
+    <nav class="navbar navbar-expand-md bg-light navbar-light fixed-top">
+      <i class="far fa-user-circle"></i>&nbsp; simple crud
+    </nav>
+  </header>
+
   {{{body}}}
-  <!-- <script src="/javascripts/jquery-3.2.1.slim.min.js"></script> -->
+
   <script src="/javascripts/jquery/jquery.min.js"></script>
   <script src="/javascripts/popper.min.js"></script>
   <script src="/javascripts/bootstrap.min.js"></script>
@@ -24,6 +31,13 @@
   <script src="/javascripts/custom.js"></script>
 
   {{{_sections.js-block}}}
+
+  <footer class="footer d-none d-sm-block">
+    <div class="container">
+      <a href="/api-docs"><img src="/images/swagger-logo.png" height="32" />&nbsp;<span class="text-muted">documentazione api</span></a>
+    </div>
+  </footer>
+
 </body>
 
 </html>

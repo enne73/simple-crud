@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Simple CRUD",
-    "description": "Un <em>semplice</em> CRUD per la gestione degli utenti.",
+    "description": "CRUD per la gestione degli utenti.",
     "version": "1.0"
   },
   "produces": ["application/json"],
@@ -14,9 +14,8 @@
           "application/json"
         ],
         "tags": ["/users"],
-        "description": "lista di tutti gli utenti",
+        "description": "Lista degli utenti",
         "parameters": [],
-
         "responses": {
           "200": {
             "description": "successful operation",
@@ -27,7 +26,6 @@
               }
             }
           }
-
         }
       }
     }
@@ -77,6 +75,5 @@
         "name": "User"
       }
     }
-
   }
 }
