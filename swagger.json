@@ -7,15 +7,20 @@
   },
   "produces": ["application/json"],
   "paths": {
-    "/users/list": {
+
+    "/users/list/{page}": {
       "get": {
-        "operationId": "usersList",
-        "produces": [
-          "application/json"
-        ],
+        "operationId": "usersPaginate",
         "tags": ["/users"],
-        "description": "Lista degli utenti",
-        "parameters": [],
+        "description": "Ritorna una pagina di 5 di utenti ",
+        "parameters": [{
+            "name": "page",
+            "in": "path",
+            "description": "numero di pagina",
+            "required": true,
+            "type": "number"
+          }
+        ],
         "responses": {
           "200": {
             "description": "successful operation",

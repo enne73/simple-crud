@@ -6,39 +6,61 @@ const router = express.Router();
 
 var User = require('../schema/User');
 
-// router.get("/", (req, res, next) => {
-//   res.status(200).json({
-//     message: "Serving Users on the Endpoint."
-//   });
-// });
-
-router.get("/list", (req, res, next) => {
-  User.find({})
-    .exec()
-    .then(docs => {
-      res.status(200).json({
-        docs
+router.get("/list/:p", (req, res) => {
+  const PAGE_SIZE = 5;
+  let page = parseInt(req.params.p);
+  let skip = PAGE_SIZE * (page - 1);
+  let w = {}
+  User.count(w, (err, count) => {
+    if (err) {
+      res.json({
+        success: false,
+        err: err
       });
-    })
-    .catch(err => {
-      console.log(err)
-    });
-});
-
-router.get("/error", (req, res, next) => {
-  throw Error('simulated error');
+    } else {
+      var q = User.find(w);
+      q.limit(PAGE_SIZE);
+      q.skip(skip);
+      q.sort('-updatedAt');
+      q.exec(function(err, users) {
+        if (err) {
+          res.json({
+            success: false,
+            err: err
+          });
+        } else {
+          res.json({
+            success: true,
+            users: users,
+            page: page,
+            limit: PAGE_SIZE,
+            total: count,
+            pages: Math.ceil(count / PAGE_SIZE)
+          })
+        }
+      })
+    }
+  })
 });
 
 router.get('/update/:id', (req, res, next) => {
   let id = req.params.id;
-  User.findOne({
-    _id: id
-  }, (err, user) => {
-    if (err) throw err;
-    res.render('users/form', {
-      user: user
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    next(new Error('id non valido'));
+  } else {
+    User.findOne({
+      _id: id
+    }, (err, user) => {
+      if (err) throw err;
+      if (!user) {
+        next(new Error('utente non trovato'));
+      } else {
+        res.render('users/form', {
+          user: user
+        });
+      }
     });
-  });
+  }
 });
 
 router.get('/detail/:op/:id', (req, res, next) => {
@@ -61,28 +83,12 @@ router.get('/add', (req, res, next) => {
   res.render('users/form');
 });
 
-router.get('/search', (req, res, next) => {
-  console.log('=============== search')
-  User.find({}).sort('-updatedAt')
-    .exec()
-    .then(users => {
-      console.log(users)
-      res.render('users/search', {
-        users: users
-      });
-    })
-    .catch(err => {
-      console.log(err)
-      next(err);
-    });
-});
-
 router.get('/paginate/:p', (req, res, next) => {
   const PAGE_SIZE = 5;
   let page = req.params.p;
   let skip = PAGE_SIZE * (page - 1);
   console.log('=============== paginate', page, skip, PAGE_SIZE)
-  let w = { }
+  let w = {}
   User.count(w, (err, count) => {
     if (err) return next(err);
     var q = User.find(w);
@@ -113,10 +119,21 @@ router.post("/add", (req, res, next) => {
       },
       email: req.body.email
     }
-    User.create(wm, function(err, u) {
-      if (err) return next(err);
-      res.redirect('detail/insert/' + u._id);
-    })
+    User.findOne({
+      email: wm.email
+    }, (err, user) => {
+      if (err) throw err;
+      if (user) {
+        let e = new Error('e-mail già utilizzata da un altro utente');
+        next(e);
+      } else {
+        User.create(wm, function(err, u) {
+          if (err) return next(err);
+          res.redirect('detail/insert/' + u._id);
+        })
+      }
+
+    });
   }, 1000);
 });
 
@@ -137,66 +154,14 @@ router.post("/update", (req, res, next) => {
         Object.assign(user, wm);
         user.save((err, u) => {
           if (err) return next(err);
-          res.redirect('detail/update/' + u._id);
+          res.send({
+            success: true,
+            operation: 'update'
+          })
+          // res.redirect('detail/update/' + u._id);
         });
       }
-
-
-
     });
-
-    // User.update({ _id:  pareq.body._id }, { $set: wm }, (err, u) => {
-    //   if (err) return next(err);
-    //   res.redirect('detail/update/' + u._id);
-    // });
-
-    // User.updateOne({_id: new ObjectId(req.body._id)}, wm, function(err, u) {
-    //
-    // })
-  }, 1000);
-});
-
-router.post("/persist", (req, res, next) => {
-  let wm = {
-    _id: req.body._id ? new ObjectId(req.body._id) : new ObjectId(),
-    name: {
-      first: req.body.first,
-      last: req.body.last
-    },
-    email: req.body.email
-  }
-  setTimeout(() => {
-    let op = req.body._id ? 'update' : 'insert';
-
-    let user = new User(wm);
-    console.log(req.body._id, op, user)
-
-    // console.log(user);
-    user.save(function(err, u) {
-      if (err) return next(err);
-      res.redirect('detail/' + op + '/' + u._id);
-    })
-
-    // User.findById(req.body._id, function(err, user) {
-    //   if (err) {
-    //     console.log(err)
-    //     return next(err);
-    //   } else {
-    //     let op = user ? 'update' : 'insert';
-    //     console.log(req.body._id, op, user)
-    //     if (!user) {
-    //       user = new User(wm);
-    //     } else {
-    //       delete wm._id;
-    //       Object.assign(user, wm);
-    //     }
-    //     // console.log(user);
-    //     user.save(function(err, u) {
-    //       if (err) return next(err);
-    //       res.redirect('detail/' + op + '/' + u._id);
-    //     })
-    //   }
-    // });
   }, 1000);
 });
 
