@@ -154,11 +154,11 @@ router.post("/update", (req, res, next) => {
         Object.assign(user, wm);
         user.save((err, u) => {
           if (err) return next(err);
-          res.send({
-            success: true,
-            operation: 'update'
-          })
-          // res.redirect('detail/update/' + u._id);
+          // res.send({
+          //   success: true,
+          //   operation: 'update'
+          // })
+          res.redirect('detail/update/' + u._id);
         });
       }
     });

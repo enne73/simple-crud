@@ -63,10 +63,17 @@ app.use('/javascripts/jquery', express.static(__dirname + '/node_modules/jquery/
 app.use('/stylesheets/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist/'));
 app.use('/stylesheets/fontawesome', express.static(__dirname + '/node_modules/@fortawesome/fontawesome-free/'));
 
+function modify(req, res, next){
+  console.log('================================================');
+console.log(res.body)
+  next();
+}
+app.use(modify);
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
- 
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
